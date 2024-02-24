@@ -1,12 +1,36 @@
 import argparse
+import os
+import time 
 from googlesearch import search
 import requests
 from bs4 import BeautifulSoup
+from colorama import Fore, Style
+
 
 # ANSI color escape codes
-BLUE = '\033[94m'
-RED = '\033[91m'
+BLUE = Fore.BLUE
+RED = Fore.RED
+GREEN = Fore.GREEN
+RESET = Style.RESET_ALL
 END = '\033[0m'
+
+def print_with_animation(text, color):
+    for char in text:
+        print(color + char, end='', flush=True)
+        time.sleep(0.03)  # Adjust the sleep duration for speed
+    print(RESET)
+
+def print_colored_figlet_text(text, color):
+    try:
+        os.system(f"figlet -f slant '{text}' > temp_figlet.txt")  # Generate figlet text to a temporary file
+        with open("temp_figlet.txt", "r") as file:
+            figlet_output = file.read()
+        os.remove("temp_figlet.txt")  # Remove temporary file
+
+        colored_text = f"{color}{figlet_output}{RESET}"  # Apply color after figlet
+        print(colored_text)
+    except FileNotFoundError:
+        print(f"{RED}Error:{RESET} 'figlet' command not found. Please install figlet.")
 
 def google_search(dork, num_results):
     try:
@@ -67,6 +91,8 @@ def duckduckgo_search(dork, num_results):
         print(BLUE + "[+]" + END, RED + "Failed to perform DuckDuckGo search:" + END, e)
 
 def main():
+    print_colored_figlet_text("KORISHEE THE CYBERMASTER", GREEN)
+    print_with_animation("PRESENTING A AUTOMATED SQL PARAMETER FINDER FOR SQLI", BLUE)
     parser = argparse.ArgumentParser(description=BLUE + "Perform dorking on search engines" + END)
     parser.add_argument("-d", "--dork", type=str, help=BLUE + "Dork string to search for" + END, required=True)
     parser.add_argument("-e", "--engine", type=str, help=BLUE + "Search engine (google, bing, yahoo, duckduckgo)" + END, required=True)
